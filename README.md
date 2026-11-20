@@ -1,3 +1,5 @@
+# Cloud Monitoring & Auto-Healing System
+
 <div align="center">
   <img src="assets/banner-hero.png" alt="Cloud Monitoring & Auto-Healing System" width="100%">
 </div>
@@ -7,257 +9,283 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?logo=flask&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)
+![HTML](https://img.shields.io/badge/HTML-Frontend-E34F26?logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-Styling-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?logo=javascript&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Active-success)
 
 </div>
 
----
+## Overview
 
-## 📖 Overview
+The **Cloud Monitoring & Auto-Healing System** is a Python-based infrastructure monitoring application that collects system resource utilization, evaluates system health, and displays monitoring information through a web dashboard.
 
-The **Cloud Monitoring & Auto-Healing System** is a production-style monitoring service that tracks CPU, memory, and disk utilization in real time, detects unhealthy services, and **automatically triggers recovery actions** — with zero manual intervention.
+The application monitors CPU, memory, and disk utilization using Python's `psutil` library. It evaluates resource usage against predefined thresholds and identifies system conditions as HEALTHY, WARNING, or CRITICAL.
 
-It was built to answer a simple operational problem: *by the time a human notices a server is struggling, damage is often already done.* This system closes that gap by continuously watching infrastructure health, reacting to problems the moment they're detected, and keeping a full audit trail of everything it observed and fixed.
+The application uses Flask to expose REST APIs and MySQL to store monitoring metrics and alert history. Docker and Docker Compose are used to containerize and manage the application and database.
 
-It exposes a clean REST API, persists historical metrics to MySQL for trend analysis, and ships fully containerized for one-command deployment on AWS EC2.
+I also extended the application by developing a web-based monitoring dashboard and implementing database-backed alert retrieval to make historical alerts available even after application restarts.
 
----
-
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---|---|
-| 📊 **Real-time metrics** | Live CPU, memory, and disk usage collected via `psutil`, refreshed on every request |
-| 🩺 **Automated health checks** | Configurable thresholds classify system state as `HEALTHY`, `WARNING`, or `CRITICAL` |
-| 🔁 **Self-healing** | Automatically detects and restarts unhealthy or crashed services — no human required |
-| 🚨 **Proactive alerting** | Every anomaly is logged the moment it's detected and exposed via a queryable API |
-| 🗄️ **Historical tracking** | All metrics and alerts are persisted to MySQL, enabling trend analysis over time |
-| 🐳 **Fully containerized** | `docker-compose up` spins up the API and database together — no manual setup |
-| ☁️ **Cloud-ready** | Designed to deploy directly to AWS EC2 with minimal configuration |
-| 🔐 **Secure by design** | Credentials and connection details are environment-based — nothing hardcoded |
-| 📈 **Scalable architecture** | Modular services (monitor, auto-heal, persistence) can scale or be swapped independently |
+| System Monitoring | Collects CPU, memory, and disk utilization using psutil. |
+| Health Evaluation | Evaluates resource usage against predefined thresholds. |
+| REST APIs | Flask APIs provide metrics, health checks, and alert information. |
+| Monitoring Dashboard | Displays resource utilization, system status, and alert history. |
+| Alert Management | Identifies resource-related issues and records alerts. |
+| MySQL Persistence | Stores metric records and alert history in MySQL. |
+| Docker Containerization | Runs the Flask application and MySQL database in separate containers. |
+| Health Check Logic | Includes service health-check and restart logic for monitored services. |
 
----
-
-## 🏗️ System Architecture
+## System Architecture
 
 <div align="center">
-  <img src="assets/architecture-diagram.png" alt="System Architecture Diagram" width="100%">
+  <img src="assets/architecture-diagram.png" alt="System Architecture" width="100%">
 </div>
 
-**How it works, end to end:**
-1. The **Dashboard / client** calls the Flask REST API to request metrics or trigger a check.
-2. The **Monitor Engine** collects live CPU, memory, and disk stats using `psutil`.
-3. The **Auto-Healing Engine** evaluates those stats (and monitored services) against defined thresholds.
-4. If something is unhealthy, it's **automatically restarted**, and the event is written to the **Proactive Alerts** log.
-5. Every metric snapshot and alert is persisted to **MySQL** for historical reporting.
-6. The entire stack runs inside **Docker containers**, deployed on **AWS EC2**.
+### How the system works
 
----
+1. **Metric Collection:** Python's psutil library collects CPU, memory, and disk utilization.
+2. **Health Evaluation:** The monitoring component compares collected values against predefined thresholds.
+3. **Backend Processing:** Flask provides REST API endpoints to retrieve metrics, execute health checks, and access alerts.
+4. **Database Storage:** MySQL stores collected metrics and generated alerts.
+5. **Dashboard Visualization:** The frontend retrieves information from Flask APIs and displays resource usage and alert history.
+6. **Containerization:** Docker Compose manages the Flask application and MySQL database containers.
 
-## 🔁 Auto-Healing Workflow
+## Auto-Healing Workflow
 
 <div align="center">
-  <img src="assets/auto-healing-workflow.png" alt="Auto-Healing Workflow Diagram" width="100%">
+  <img src="assets/auto-healing-workflow.png" alt="Health Check and Auto-Healing Workflow" width="100%">
 </div>
 
-Each check cycle: **collect → evaluate → decide → act.** If a service or resource crosses its threshold, the engine restarts it automatically and logs an alert. If everything is within limits, no action is taken — keeping the system quiet unless something actually needs attention.
+The application includes a basic health-check and service-recovery mechanism.
 
----
+The workflow follows:
 
-## 🖥️ Dashboard Preview
+**Collect → Evaluate → Detect → Alert / Attempt Recovery**
+
+- Resource utilization is evaluated against configured thresholds.
+- High resource utilization generates a RESOURCE alert.
+- The application contains logic to check monitored services and attempt a restart when a service is detected as stopped.
+- Alerts are recorded for monitoring and troubleshooting.
+
+**Implementation note:** Health checks are triggered through the API or dashboard button; a background scheduler is not currently implemented. The service restart mechanism has not been fully validated in the current Docker environment because the application container does not run systemd. High resource utilization currently generates alerts rather than automatically correcting the resource usage.
+
+## Dashboard
 
 <div align="center">
-  <img src="assets/dashboard-mockup.png" alt="Dashboard Preview" width="100%">
+  <img src="assets/dashboard-mockup.png" alt="Dashboard Design Preview" width="100%">
 </div>
 
-A conceptual preview of what the monitoring dashboard surfaces: live resource cards, a rolling usage trend, and a running feed of recent alerts and auto-healing actions.
+The web dashboard provides a visual interface for monitoring system health.
 
----
+### Dashboard functionality
 
-## 🛠️ Tech Stack
+- Displays CPU utilization.
+- Displays memory utilization.
+- Displays disk utilization.
+- Shows overall system health status.
+- Displays recent alert history.
+- Provides a Run Health Check button.
+- Refreshes monitoring information periodically through Flask API requests.
 
-| Layer | Technology |
+**Note:** The image above is a design preview. Replace it with a screenshot of the running dashboard when available.
+
+## Technology Stack
+
+| Component | Technology |
 |---|---|
-| Backend / API | Python, Flask |
-| System Metrics | psutil |
+| Programming Language | Python 3.11 |
+| Backend Framework | Flask |
+| System Monitoring | psutil |
+| Frontend | HTML, CSS, JavaScript |
 | Database | MySQL |
-| Containerization | Docker, Docker Compose |
-| Deployment | AWS EC2 |
-| WSGI Server | Gunicorn |
+| Containerization | Docker |
+| Container Management | Docker Compose |
+| Version Control | Git and GitHub |
 
----
+## Project Structure
 
-## 📂 Project Structure
-
-```
-cloud-monitoring-autohealing/
+```text
+Cloud-Monitoring-Auto-Healing-System/
+│
 ├── app/
-│   ├── main.py            # Flask REST API — routes and request handling
-│   ├── monitor.py         # Metric collection (CPU / Memory / Disk)
-│   ├── auto_heal.py       # Health checks + auto-recovery logic
-│   └── db.py               # MySQL persistence layer
-├── assets/                 # Banners, diagrams, and screenshots used in this README
-├── Dockerfile               # Container image definition
-├── docker-compose.yml       # Full stack: API + MySQL
-├── requirements.txt         # Python dependencies
-├── start.sh                 # One-command quick start (build + run)
-├── .env.example              # Sample environment configuration
-├── WORKING_PROCESS.md        # Detailed step-by-step explanation of how the system works
+│   ├── main.py              # Flask application and REST APIs
+│   ├── monitor.py           # CPU, memory and disk monitoring
+│   ├── auto_heal.py         # Health checks and service recovery logic
+│   ├── db.py                # MySQL database operations
+│   │
+│   ├── templates/
+│   │   └── index.html       # Monitoring dashboard
+│   │
+│   └── static/
+│       ├── style.css        # Dashboard styling
+│       └── script.js        # Dashboard API integration
+│
+├── assets/
+│   ├── architecture-diagram.png
+│   ├── auto-healing-workflow.png
+│   ├── banner-hero.png
+│   └── dashboard-mockup.png
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── start.sh
+├── .env.example
+├── .gitignore
+├── WORKING_PROCESS.md
 ├── LICENSE
 └── README.md
 ```
 
-📄 **New here?** Read [`WORKING_PROCESS.md`](WORKING_PROCESS.md) for a full step-by-step walkthrough of how data flows through the system, from metric collection to auto-healing to persistence.
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Docker & Docker Compose installed
-- (Optional) Python 3.11+ if you want to run locally without Docker
-- (Optional) AWS EC2 instance for cloud deployment
 
-### Option 1 — One-command quick start
+- Python 3.11+
+- Docker Desktop
+- Docker Compose
+- Git
 
-```bash
-git clone https://github.com/atharva1727/cloud-monitoring-autohealing.git
-cd cloud-monitoring-autohealing
-chmod +x start.sh
-./start.sh
-```
-
-### Option 2 — Run with Docker Compose manually
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/atharva1727/cloud-monitoring-autohealing.git
-cd cloud-monitoring-autohealing
-docker-compose up --build
+git clone https://github.com/Anushkash26/Cloud-Monitoring-Auto-Healing-System.git
 ```
 
-The API will be live at **http://localhost:5000**. MySQL spins up automatically alongside it.
-
-### Option 3 — Run locally (without Docker)
+### 2. Navigate to the project directory
 
 ```bash
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-export DB_HOST=localhost
-export DB_USER=root
-export DB_PASSWORD=yourpassword
-export DB_NAME=cloud_monitoring
-
-python app/main.py
+cd Cloud-Monitoring-Auto-Healing-System
 ```
 
-### Option 4 — Deploy to AWS EC2
+### 3. Start the application
 
 ```bash
-# On your EC2 instance
-sudo yum install -y docker git
-sudo service docker start
-git clone https://github.com/atharva1727/cloud-monitoring-autohealing.git
-cd cloud-monitoring-autohealing
-sudo docker-compose up --build -d
+docker compose up --build -d
 ```
 
----
+### 4. Verify running containers
 
-## 📡 API Reference
+```bash
+docker compose ps
+```
 
-| Method | Endpoint | Description |
+### 5. Access the application
+
+Open the following URL in your browser:
+
+```text
+http://localhost:5000/
+```
+
+The Flask application and MySQL database are started through Docker Compose.
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+## REST API Reference
+
+| HTTP Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/health` | Liveness probe for the monitoring service itself |
-| `GET` | `/api/metrics` | Returns current CPU / memory / disk usage and status |
-| `POST` | `/api/check` | Runs a full health check and triggers auto-healing if an issue is found |
-| `GET` | `/api/alerts?limit=20` | Returns recent alert history, most recent first |
+| GET | `/` | Displays the monitoring dashboard. |
+| GET | `/api/health` | Checks Flask application health. |
+| GET | `/api/metrics` | Collects and returns current system metrics. |
+| POST | `/api/check` | Triggers a health check and generates alerts when required. |
+| GET | `/api/alerts` | Retrieves recent alerts from MySQL. |
 
-**Example request:**
+### Example API requests
+
+Retrieve system metrics:
 
 ```bash
 curl http://localhost:5000/api/metrics
 ```
 
-**Example response:**
+Check application health:
 
-```json
-{
-  "timestamp": "2026-07-16T10:32:00Z",
-  "cpu_percent": 42.1,
-  "memory_percent": 67.8,
-  "memory_used_gb": 5.4,
-  "memory_total_gb": 8.0,
-  "disk_percent": 55.2,
-  "disk_used_gb": 110.4,
-  "disk_total_gb": 200.0,
-  "status": "HEALTHY"
-}
+```bash
+curl http://localhost:5000/api/health
 ```
 
-**Triggering a health check:**
+Trigger a health check:
 
 ```bash
 curl -X POST http://localhost:5000/api/check
 ```
 
-```json
-{
-  "metrics": { "cpu_percent": 91.2, "status": "CRITICAL", "...": "..." },
-  "issues_found": true,
-  "issues": [
-    { "type": "RESOURCE", "severity": "CRITICAL", "detail": "CPU=91.2% MEM=70.1% DISK=55.0%" },
-    { "type": "SERVICE_DOWN", "service": "nginx", "auto_healed": true }
-  ]
-}
+Retrieve alert history:
+
+```bash
+curl http://localhost:5000/api/alerts
 ```
 
+## Monitoring Thresholds
+
+The application uses predefined thresholds to evaluate system resource utilization.
+
+| Resource | Threshold |
+|---|---:|
+| CPU | 85% |
+| Memory | 90% |
+| Disk | 90% |
+
+The monitoring component classifies system health based on the configured evaluation logic:
+
+- **HEALTHY:** Resource utilization is within normal limits.
+- **WARNING:** Resource utilization is approaching configured limits.
+- **CRITICAL:** A critical resource threshold has been exceeded.
+
+## My Contributions and Learning
+
+I extended an existing open-source monitoring project and worked on understanding and improving its functionality.
+
+My contributions include:
+
+- Developed a web-based monitoring dashboard using HTML, CSS, and JavaScript.
+- Integrated the dashboard with Flask REST APIs.
+- Updated alert retrieval functionality to fetch historical alert records from MySQL.
+- Tested metric collection, health-check APIs, and database persistence.
+- Configured and executed the application using Docker Compose.
+- Practised troubleshooting application and database containers.
+
+### Key Concepts Learned
+
+- Infrastructure monitoring and resource utilization.
+- REST API development using Flask.
+- Python system monitoring with psutil.
+- MySQL database integration and persistence.
+- Docker images, containers, and Docker Compose.
+- Basic health checks, alerting, and service recovery concepts.
+
+## Future Improvements
+
+- Implement continuous background health monitoring.
+- Improve and validate automatic service recovery inside containers.
+- Add email and Slack notifications for critical alerts.
+- Integrate AWS CloudWatch for cloud infrastructure monitoring.
+- Deploy the application on an AWS EC2 instance.
+- Add Grafana for advanced monitoring and visualization.
+- Support monitoring multiple servers.
+
+
+## License
+
+This project retains the original repository's MIT License. Refer to the [LICENSE](LICENSE) file for details.
+
 ---
-
-## ⚙️ Configuration
-
-Thresholds and connection settings can be tuned via environment variables and constants:
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `DB_HOST` | `localhost` | MySQL host |
-| `DB_USER` | `root` | MySQL user |
-| `DB_PASSWORD` | — | MySQL password |
-| `DB_NAME` | `cloud_monitoring` | Database name |
-| `CPU_THRESHOLD` | `85%` | CPU usage that triggers a warning/critical state |
-| `MEMORY_THRESHOLD` | `90%` | Memory usage that triggers a warning/critical state |
-| `DISK_THRESHOLD` | `90%` | Disk usage that triggers a warning/critical state |
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Slack / Email notifications for critical alerts
-- [ ] Grafana dashboard integration for richer visualization
-- [ ] Fully configurable thresholds via `.env`
-- [ ] Kubernetes deployment manifests
-- [ ] Multi-host/multi-instance monitoring support
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](../../issues) or open a pull request.
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 
 <div align="center">
 
-**Built by [Anushka Shelke]
+**Developed and extended by Anushka Shelke**
+
+*Learning Cloud Engineering, Infrastructure Monitoring, and DevOps.*
 
 </div>
