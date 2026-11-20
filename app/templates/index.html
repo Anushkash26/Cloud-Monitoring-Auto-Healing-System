@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Monitoring Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>CloudMonitor</h2>
+        <p class="active">Dashboard</p>
+        <p>System Metrics</p>
+        <p>Alerts</p>
+    </div>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h1>Cloud Monitoring</h1>
+                <p>Infrastructure health overview</p>
+            </div>
+            <button id="checkBtn" onclick="runHealthCheck()">
+                Run Health Check
+            </button>
+        </header>
+
+        <section class="status-panel">
+            <h3>System Status</h3>
+            <h2 id="systemStatus">Loading...</h2>
+            <p id="lastUpdated">Waiting for metrics...</p>
+        </section>
+
+        <section class="metrics">
+            <div class="metric-card">
+                <h3>CPU Usage</h3>
+                <h1 id="cpu">--%</h1>
+                <div class="progress"><div id="cpuBar"></div></div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Memory Usage</h3>
+                <h1 id="memory">--%</h1>
+                <div class="progress"><div id="memoryBar"></div></div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Disk Usage</h3>
+                <h1 id="disk">--%</h1>
+                <div class="progress"><div id="diskBar"></div></div>
+            </div>
+        </section>
+
+
+<section class="chart-panel">
+    <h2>Resource Usage Overview</h2>
+    <p>Live CPU, memory and disk utilization</p>
+    <div class="chart-container">
+        <canvas id="usageChart"></canvas>
+    </div>
+</section>
+
+
+        <section class="alerts-panel">
+            <h2>Recent Alerts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Severity</th>
+                        <th>Details</th>
+                        <th>Auto-Healed</th>
+                    </tr>
+                </thead>
+                <tbody id="alertsBody">
+                    <tr><td colspan="5">Loading alerts...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
