@@ -276,12 +276,6 @@ My contributions include:
 - Support monitoring multiple servers.
 
 
-## License
-
-This project retains the original repository's MIT License. Refer to the [LICENSE](LICENSE) file for details.
-
----
-
 <div align="center">
 
 **Developed and extended by Anushka Shelke**
