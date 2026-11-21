@@ -278,7 +278,6 @@ My contributions include:
 
 <div align="center">
 
-**Developed and extended by Anushka Shelke**
 
 *Learning Cloud Engineering, Infrastructure Monitoring, and DevOps.*
 
